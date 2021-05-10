@@ -42,7 +42,7 @@ permission_user(){
     #ajout des droits du user dans le sudoers
     cat /etc/sudoers |
         echo "userjob      ALL(ALL)/bin/apt," >> sudo tee -a /etc/sudoers
-
+}
 ##Main
 
 # On installe le pare-feu
@@ -83,6 +83,7 @@ echo "userjob:userjob" | chpasswd
 permission_user
 
 # On affiche le mot de passe de jenkins
+sleep 30s
 echo "${GREEN}$(date +'%Y-%m-%d %H:%M:%S') [ INFO  ] : Mot de passe jenkins ... ${NC}"
 cat /var/lib/jenkins/secrets/initialAdminPassword | xargs echo
 
