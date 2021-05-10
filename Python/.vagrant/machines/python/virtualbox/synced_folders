@@ -1,0 +1,1 @@
+{"rsync":{"/vagrant":{"type":"rsync","guestpath":"/vagrant","hostpath":"C:/Temp/TP_Python_groupe2/Python","disabled":false,"__vagrantfile":true,"owner":"vagrant","group":"vagrant"}},"virtualbox":{"/home/shared":{"guestpath":"/home/shared","hostpath":"C:/Temp/TP_Python_groupe2/Python/shared","disabled":false,"__vagrantfile":true}}}
