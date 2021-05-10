@@ -5,8 +5,15 @@ installation du plugin vagrant-vbguest si problème de montage du partage "share
 unknown filesystem type 'vboxsf'
 
 executer la commande :
-
+```console
 vagrant plugin install vagrant-vbguest
+```
+
+Mettre à jour Vagrant box : 
+
+```console
+vagrant box update
+```
 
 
 A la fin de l'installation, il faut récupérer le mode passe jenkins : 
