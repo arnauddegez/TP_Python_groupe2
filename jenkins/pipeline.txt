@@ -1,6 +1,11 @@
 pipeline {
     agent any
     stages {
+        stage('slack') {
+            steps {
+                slackSend channel: 'C021DS82PMG', color: "#439FE0", message: "[Projet ${env.JOB_NAME}] - Lancement du build:  ${env.BUILD_NUMBER}"
+            }
+        }
         stage('Checkout code') {
             steps {
                 git credentialsId: 'ede1d98f-db6f-4bb6-a01b-ad304616ed46', url: 'https://github.com/apalpant/gradle-jenkins'
@@ -30,9 +35,10 @@ pipeline {
                 // sh 'pip3 install -r requirements.txt'
             }   
         }
+
         stage('build') {
             steps {
-                sh 'gradle packageDistribution'
+                sh '/opt/gradle/latest/bin/gradle packageDistribution'
             }
         }
         stage('test') {
@@ -45,8 +51,21 @@ pipeline {
         }   
         stage('deploy') {
             steps {
-                sh 'gradle publish'
+                sh 'python3 --version'
             }
+        }
+    }
+    post {
+        always {
+            script {
+                color = "danger"
+                if (currentBuild.currentResult == "SUCCESS") {
+                    color = "good"
+                } else if (currentBuild.currentResult == "UNSTABLE") {
+                    color = "warning"
+                }
+            }
+            slackSend channel: 'C021DS82PMG', color: "${color}", message: "[Projet ${env.JOB_NAME}] - Fin du build avec le statut:  ${currentBuild.currentResult} (${currentBuild.durationString})"
         }
     }
 }
