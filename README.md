@@ -10,7 +10,7 @@ vagrant plugin install vagrant-vbguest
 
 
 A la fin de l'installation, il faut récupérer le mode passe jenkins : 
-'''console
+```console
 jenkins: 2021-05-10 09:19:21 [ INFO  ] : Mot de passe jenkins ...
     jenkins: 8841043cc35f452c9973c08492152ef4
-'''
+```
