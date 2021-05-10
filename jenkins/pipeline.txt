@@ -1,9 +1,13 @@
 pipeline {
     agent any
+    environment {
+        PATH="/var/lib/jenkins/.local/lib/python3.7/site-packages:$PATH"
+    }
     stages {
         stage('slack') {
             steps {
-                slackSend channel: 'C021DS82PMG', color: "#439FE0", message: "[Projet ${env.JOB_NAME}] - Lancement du build:  ${env.BUILD_NUMBER}"
+                // slackSend channel: 'C021DS82PMG', color: "#439FE0", message: "[Projet ${env.JOB_NAME}] - Lancement du build:  ${env.BUILD_NUMBER}"
+                echo "[Projet ${env.JOB_NAME}] - Lancement du build:  ${env.BUILD_NUMBER}"
             }
         }
         stage('Checkout code') {
@@ -28,27 +32,40 @@ pipeline {
         }
         stage('install dependencies') {
             steps {
-                //sh 'python -m venv venv'
-                //sh '. venv/bin/activate'
-                //sh 'pip3 install flake8 pytest pytest-cov'
+                sh 'python3 -m venv venv'
+                sh '. venv/bin/activate'
+                sh 'python3 -m pip install pytest pytest-cov pycodestyle pylint epydoc pylint-junit'
                 sh 'pip3 freeze > requirements.txt'
-                // sh 'pip3 install -r requirements.txt'
+                // sh 'python3 -m pip install -r requirements.txt'
             }   
         }
-
+        
         stage('build') {
             steps {
                 sh '/opt/gradle/latest/bin/gradle packageDistribution'
             }
         }
-        stage('test') {
+        stage('Test') { 
             steps {
-                    //sh '. venv/bin/activate'
-                    // sh 'flake8 --exclude=venv* --statistics'
-                  //  sh 'pytest -v --cov=calculator'
-                 sh 'python src/test_calculator.py'
+                sh '. venv/bin/activate'
+                sh 'python3 -m pycodestyle ${WORKSPACE}/src/ | tee pep8_report.txt'
+                sh 'python3 -m pylint --output-format=parseable ${WORKSPACE}/src/ | tee pylint_report.txt'
+                // sh 'python3 -m pylint --output-format=junit ${WORKSPACE}/src/'
+                sh 'python3 -m pytest -v --cov=calculator'
+                sh 'python3 -m coverage xml'
+               
+                // sh '[ -d ${WORKSPACE}/API ] && rm -fr ${WORKSPACE}/API'
+                //sh 'python3 -m epydoc ${WORKSPACE}/src/ --html'
             }
-        }   
+        }
+        
+        stage('Publish Code QA') {
+            steps {
+                echo 'Publishing Code QA ....'
+                 cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'coverage.xml', conditionalCoverageTargets: '70, 0, 0', failUnhealthy: false, failUnstable: false, lineCoverageTargets: '80, 0, 0', maxNumberOfBuilds: 0, methodCoverageTargets: '80, 0, 0', onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false
+            }
+        }
+        
         stage('deploy') {
             steps {
                 sh 'python3 --version'
@@ -65,7 +82,7 @@ pipeline {
                     color = "warning"
                 }
             }
-            slackSend channel: 'C021DS82PMG', color: "${color}", message: "[Projet ${env.JOB_NAME}] - Fin du build avec le statut:  ${currentBuild.currentResult} (${currentBuild.durationString})"
+            // slackSend channel: 'C021DS82PMG', color: "${color}", message: "[Projet ${env.JOB_NAME}] - Fin du build avec le statut:  ${currentBuild.currentResult} (${currentBuild.durationString})"
         }
     }
 }

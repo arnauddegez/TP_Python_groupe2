@@ -64,6 +64,7 @@ install_package "gnupg"
 install_package "git"
 install_package "python3"
 install_package "python3-pip"
+install_package "python3-venv"
 
 
 # On installe jenkins suivant les preconisations du site

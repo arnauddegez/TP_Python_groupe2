@@ -1,6 +1,8 @@
 Plugin a garder ?
 > Plugin AnsiColor
 
+> Plugin Cobertura
+
 Plugin pour agir avec slack
 > Plugin Slack Notification
 
