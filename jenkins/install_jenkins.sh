@@ -61,6 +61,9 @@ ufw allow 8080
 apt-get -y update
 install_package "openjdk-11-jdk"
 install_package "gnupg"
+install_package "git"
+install_package "python3"
+install_package "python3-pip"
 
 
 # On installe jenkins suivant les preconisations du site
@@ -96,3 +99,23 @@ sed "s/PasswordAuthentication no/PasswordAuthentication yes/" \
 
 # On restart le service
 systemctl restart sshd
+
+# Installation de gradle
+VERSION=7.0
+wget https://downloads.gradle-dn.com/distributions/gradle-${VERSION}-bin.zip -P /tmp
+
+unzip -d /opt/gradle /tmp/gradle-${VERSION}-bin.zip
+
+# Faire pointer le lien vers la dernière version de gradle
+
+ln -s /opt/gradle/gradle-${VERSION} /opt/gradle/latest
+
+# Ajout de gradle au PATH
+
+touch /etc/profile.d/gradle.sh
+
+echo "export PATH=/opt/gradle/latest/bin:${PATH}" > /etc/profile.d/gradle.sh
+
+chmod +x /etc/profile.d/gradle.sh
+
+source /etc/profile.d/gradle.sh

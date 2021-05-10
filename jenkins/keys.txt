@@ -1,0 +1,2 @@
+Signing Secret = 5654bec760e48372cf9e7f813eac019b
+Slack Token Jenkins = xoxb-1883936723840-2060547075377-pv6OiABGAkSHSvY7Ns9sqWZq
