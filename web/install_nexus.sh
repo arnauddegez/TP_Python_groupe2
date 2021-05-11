@@ -102,7 +102,7 @@ ufw --force enable
 
 # Affiche le mot de passe
 
-sleep 30s #il faut attendre que le fichier se crée.
+sleep 90s #il faut attendre que le fichier se crée.
 
 echo 'Mot de passe admin \n'
 cat /opt/nexus/sonatype-work/nexus3/admin.password
