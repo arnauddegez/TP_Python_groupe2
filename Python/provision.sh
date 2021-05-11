@@ -78,3 +78,5 @@ cp /home/shared/index.html /var/www/html/
 # On change le 'owner' sur le dossier 'html'
 #cd /var/www
 chown -R www-data:www-data /var/www/html/
+
+echo "####### SUCCESS #######"
