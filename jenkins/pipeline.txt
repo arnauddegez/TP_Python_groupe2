@@ -8,11 +8,22 @@ pipeline {
             steps {
                 // slackSend channel: 'C021DS82PMG', color: "#439FE0", message: "[Projet ${env.JOB_NAME}] - Lancement du build:  ${env.BUILD_NUMBER}"
                 echo "[Projet ${env.JOB_NAME}] - Lancement du build:  ${env.BUILD_NUMBER}"
+                echo "[Projet ${env.JOB_NAME}] - ${env.BRANCH_NAME} ${env.CHANGE_TITLE} ${env.CHANGE_AUTHOR} ${env.CHANGE_AUTHOR_DISPLAY_NAME} ${env.CHANGE_AUTHOR_EMAIL}"
+                script {
+                    env.GIT_COMMIT_MSG = sh (script: 'git log -1 --pretty=%s ${GIT_COMMIT}', returnStdout: true).trim()
+                    env.GIT_COMMIT_NB = sh (script: 'git log -1 --pretty=%h ${GIT_COMMIT}', returnStdout: true).trim()
+                    env.GIT_AUTHOR = sh (script: 'git log -1 --pretty=%an ${GIT_COMMIT}', returnStdout: true).trim()
+                    env.GIT_AUTHOR_MAIL = sh (script: 'git log -1 --pretty=%ae ${GIT_COMMIT}', returnStdout: true).trim()
+                }
+                echo "[Projet ${env.JOB_NAME}] - ${env.GIT_COMMIT_MSG} ${env.GIT_COMMIT_NB} ${env.GIT_AUTHOR_MAIL} ${env.GIT_AUTHOR}"
+                
+                echo "${env.CHANGE_URL}"
             }
         }
         stage('Checkout code') {
             steps {
                 git credentialsId: 'ede1d98f-db6f-4bb6-a01b-ad304616ed46', url: 'https://github.com/apalpant/gradle-jenkins'
+                echo "[Projet ${env.JOB_NAME}] - ${env.BRANCH_NAME} ${env.CHANGE_TITLE} ${env.CHANGE_AUTHOR} ${env.CHANGE_AUTHOR_DISPLAY_NAME} ${env.CHANGE_AUTHOR_EMAIL}"
             }
         }
         stage('ansi') {
@@ -49,20 +60,42 @@ pipeline {
             steps {
                 sh '. venv/bin/activate'
                 sh 'python3 -m pycodestyle ${WORKSPACE}/src/ | tee pep8_report.txt'
-                sh 'python3 -m pylint --output-format=parseable ${WORKSPACE}/src/ | tee pylint_report.txt'
+                // sh 'python3 -m pylint --output-format=parseable ${WORKSPACE}/src/ | tee pylint_report.txt'
+                // sh 'python3 -m pylint -f parseable {WORKSPACE}/src/ | tee pylint.out'
                 // sh 'python3 -m pylint --output-format=junit ${WORKSPACE}/src/'
                 sh 'python3 -m pytest -v --cov=calculator'
                 sh 'python3 -m coverage xml'
-               
-                // sh '[ -d ${WORKSPACE}/API ] && rm -fr ${WORKSPACE}/API'
-                //sh 'python3 -m epydoc ${WORKSPACE}/src/ --html'
+                
+                // Run Pylint.
+                // sh 'python3 -m pylint --rcfile=.pylintrc ${WORKSPACE}/src/ > pylint.report'
+                sh 'python3 -m pylint -f parseable {WORKSPACE}/src/ | tee pylint.report'
+
+                // Run Pycodestyle (PEP8 checks).
+                 sh 'python3 -m pycodestyle ${WORKSPACE}/src/ | tee pep8.report'
+                
+                 
             }
         }
         
         stage('Publish Code QA') {
             steps {
                 echo 'Publishing Code QA ....'
-                 cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'coverage.xml', conditionalCoverageTargets: '70, 0, 0', failUnhealthy: false, failUnstable: false, lineCoverageTargets: '80, 0, 0', maxNumberOfBuilds: 0, methodCoverageTargets: '80, 0, 0', onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false
+                
+                recordIssues(
+                    tools: [pep8(pattern: 'pep8.report')],
+                    unstableTotalAll: 200,
+                    failedTotalAll: 220
+                )
+                
+                recordIssues(
+                    tools: [pyLint(pattern: 'pylint.report')],
+                    unstableTotalAll: 20,
+                    failedTotalAll: 30
+                )
+
+                cobertura coberturaReportFile: 'coverage.xml'
+                
+                // cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'coverage.xml', conditionalCoverageTargets: '70, 0, 0', failUnhealthy: false, failUnstable: false, lineCoverageTargets: '80, 0, 0', maxNumberOfBuilds: 0, methodCoverageTargets: '80, 0, 0', onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false
             }
         }
         
