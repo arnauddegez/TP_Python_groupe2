@@ -122,4 +122,6 @@ chmod +x /etc/profile.d/gradle.sh
 source /etc/profile.d/gradle.sh
 
 # Installation de relay
-sudo wget -O /usr/local/bin/relay https://storage.googleapis.com/webhookrelay/downloads/relay-linux-amd64
+wget -O /usr/local/bin/relay https://storage.googleapis.com/webhookrelay/downloads/relay-linux-amd64
+
+chmod +wx /usr/local/bin/relay

@@ -10,6 +10,7 @@ Plugin Rapport
 > Warnings Next Generation
 > Analysis Model API
 
+Attention au Relay !!!
 
 Pensez a mettre une config propre... repo/mdp un peu mieux
 > $ sudo cp gradle.properties /var/lib/jenkins/workspace/tp
