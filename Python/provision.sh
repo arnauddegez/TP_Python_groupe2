@@ -59,6 +59,8 @@ apt-get update
 #installation de mongodb
 install_package "mongodb-org"
 
+sleep 30s
+
 systemctl start mongod.service
 
 # On force le pare feu a se mettre en route
