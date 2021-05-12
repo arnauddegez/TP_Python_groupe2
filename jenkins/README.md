@@ -9,11 +9,13 @@ vagrant up
 
 Une page s'affiche avec 2 options possibles.
 - Choisir l'option 'Sélectionner les plugins à installer'.
-- Sélectionner alors les plugins les plugins recommandés et rechercher pour les ajouter les plugins suivants:
+- Sélectionner alors l'onglet recommandés et recherchez  et cochez les plugins suivants:
 >  - Cobertura
 >  - Warnings Next Generation
 
 **Désactiver le plugin gradle**
+
+Cliquez sur "Installer"
 
 Arrive la page "Créer le 1er utilisateur"
 Renseignez a minima les champs.
@@ -21,6 +23,7 @@ Renseignez a minima les champs.
 > - Mot de passe
 > - Confirmation du mot de passe
 
+Cliquez sur "Continuez en tant qu'administrateur"
 Cliquez sur "Sauver et terminer"
 Cliquez sur "Commencer à utiliser Jenkins"
 
@@ -29,9 +32,7 @@ Sélectionner le menu "Administrer Jenkins" puis "Gestion des plugins". Placez v
 
 Dans la barre de recherche, recherchez les plugins suivants
 >  - AnsiColor
->  - Workspace Cleanup
->  - Slack Notification>    
->  - ? Analysis Model API ?
+>  - Slack Notification
 
 Pour chacun cochez la case et cliquez sur "Install without restart"
 
@@ -40,6 +41,7 @@ Renseignez un nom de projet puis sélectionnez "Pipeline"
 Cliquez sur "Ok"
 
 Une nouvelle page apparait
+ou Cliquez sur le projet puis "Configurer"
 Sélectionnez la case à cocher "GitHub hook trigger for GITScm polling"
 Copiez alors le contenu du fichier "pipeline.txt" du projet
 Cliquez sur "Sauver"
