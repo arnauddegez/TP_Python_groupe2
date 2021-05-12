@@ -91,6 +91,7 @@ apt-get -y update
 install_package "openjdk-11-jdk"
 install_package "gnupg"
 install_package "git"
+install_package "unzip"
 install_package "python3"
 install_package "python3-pip"
 install_package "python3-venv"

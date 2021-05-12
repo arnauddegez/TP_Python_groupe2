@@ -20,9 +20,8 @@ pipeline {
         }
 		
 		stage('Init') {
-            steps {
-				
-				sh 'mkdir -p "${WORKSPACE}/.gradle/" && cp /home/shared/gradle.properties ${WORKSPACE}/.gradle/'
+            steps {				
+				sh 'cp /home/shared/gradle.properties ${WORKSPACE}'
 				
                 script {
                     env.GIT_COMMIT_MSG = sh (script: 'git log -1 --pretty=%s ${GIT_COMMIT}', returnStdout: true).trim()
@@ -48,8 +47,7 @@ pipeline {
         
         stage('Build application') {
             steps {
-                // sh '/opt/gradle/latest/bin/gradle packageDistribution'
-                 sh 'python3 --version'
+                sh '/opt/gradle/latest/bin/gradle packageDistribution'
             }
         }
         

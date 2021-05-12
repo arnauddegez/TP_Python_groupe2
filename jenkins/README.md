@@ -53,6 +53,20 @@ Sur la page principale vous pouvez alors cliquer sur "Lancer un build"
 
 Attention au Relay && slack !!!
 
+https://webhookrelay.com/v1/installation/cli.html#Registration-amp-Authentication
+
+https://webhookrelay.com/blog/2017/11/23/github-jenkins-guide/#Step-6-Setting-up-Webhook-Relay-agent
+
+La partie installation est faite
+
+Slack
+
+https://medium.com/appgambit/integrating-jenkins-with-slack-notifications-4f14d1ce9c7a
+
+https://www.baeldung.com/ops/jenkins-slack-integration
+
+Capture écran slack !
+
 Pense bete...
 > https://opensource.triology.de/jenkins/pipeline-syntax/globals
 > https://webhookrelay.com/v1/installation/cli.html
