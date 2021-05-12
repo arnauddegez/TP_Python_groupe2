@@ -43,6 +43,37 @@ permission_user(){
     cat /etc/sudoers |
         echo "userjob      ALL(ALL)/bin/apt," >> sudo tee -a /etc/sudoers
 }
+
+# Installation de gradle
+install_gradle(){
+	VERSION=7.0
+	wget https://downloads.gradle-dn.com/distributions/gradle-${VERSION}-bin.zip -P /tmp
+
+	unzip -d /opt/gradle /tmp/gradle-${VERSION}-bin.zip
+
+	# Faire pointer le lien vers la dernière version de gradle
+
+	ln -s /opt/gradle/gradle-${VERSION} /opt/gradle/latest
+
+	# Ajout de gradle au PATH
+
+	touch /etc/profile.d/gradle.sh
+
+	echo "export PATH=/opt/gradle/latest/bin:${PATH}" > /etc/profile.d/gradle.sh
+
+	chmod +x /etc/profile.d/gradle.sh
+
+	source /etc/profile.d/gradle.sh
+}
+
+
+# Installation de relay (webhook)
+install_webhook(){
+	wget -O /usr/local/bin/relay https://storage.googleapis.com/webhookrelay/downloads/relay-linux-amd64
+
+	chmod +wx /usr/local/bin/relay
+}
+
 ##Main
 
 # On installe le pare-feu
@@ -53,8 +84,6 @@ ufw --force enable
 
 # On lui fixe de nouvelles regles
 ufw allow ssh
-ufw allow http
-ufw allow https
 ufw allow 8080
 
 # On prepare l'installation de jenkins
@@ -62,10 +91,13 @@ apt-get -y update
 install_package "openjdk-11-jdk"
 install_package "gnupg"
 install_package "git"
+install_package "unzip"
 install_package "python3"
 install_package "python3-pip"
 install_package "python3-venv"
 
+install_gradle
+install_webhook
 
 # On installe jenkins suivant les preconisations du site
 source_jenkins
@@ -101,27 +133,4 @@ sed "s/PasswordAuthentication no/PasswordAuthentication yes/" \
 # On restart le service
 systemctl restart sshd
 
-# Installation de gradle
-VERSION=7.0
-wget https://downloads.gradle-dn.com/distributions/gradle-${VERSION}-bin.zip -P /tmp
 
-unzip -d /opt/gradle /tmp/gradle-${VERSION}-bin.zip
-
-# Faire pointer le lien vers la dernière version de gradle
-
-ln -s /opt/gradle/gradle-${VERSION} /opt/gradle/latest
-
-# Ajout de gradle au PATH
-
-touch /etc/profile.d/gradle.sh
-
-echo "export PATH=/opt/gradle/latest/bin:${PATH}" > /etc/profile.d/gradle.sh
-
-chmod +x /etc/profile.d/gradle.sh
-
-source /etc/profile.d/gradle.sh
-
-# Installation de relay
-wget -O /usr/local/bin/relay https://storage.googleapis.com/webhookrelay/downloads/relay-linux-amd64
-
-chmod +wx /usr/local/bin/relay

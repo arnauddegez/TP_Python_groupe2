@@ -70,7 +70,7 @@ ufw --force enable
 ufw allow ssh
 ufw allow http
 ufw allow https
-ufw allow 5000
+ufw allow 5000/tcp
 
 # On deplace le index.html partage vers le repertoire cible
 cp /home/shared/index.html /var/www/html/
