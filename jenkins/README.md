@@ -1,19 +1,55 @@
-Plugin a garder ?
-> Plugin AnsiColor
+# Installation Jenkins
 
-> Plugin Cobertura
+> Pour commencer l'installation lancer la commande
+```
+vagrant up
+```
+> A la fin de l'installation le mot de passe initial de Jenkins sera affiché. Copiez le.
+> Se rendre à l'adresse http://192.168.1.3:8080/ et renseignez le mot de passe précédemment copié.
 
-Plugin pour agir avec slack
-> Plugin Slack Notification
+Une page s'affiche avec 2 options possibles.
+- Choisir l'option 'Sélectionner les plugins à installer'.
+- Sélectionner alors les plugins les plugins recommandés et rechercher pour les ajouter les plugins suivants:
+>  - Cobertura
+>  - Warnings Next Generation
 
-Plugin Rapport
-> Warnings Next Generation
-> Analysis Model API
+**Désactiver le plugin gradle**
 
-Attention au Relay !!!
+Arrive la page "Créer le 1er utilisateur"
+Renseignez a minima les champs.
+> - Nom d'utilisateur
+> - Mot de passe
+> - Confirmation du mot de passe
 
-Pensez a mettre une config propre... repo/mdp un peu mieux
-> $ sudo cp gradle.properties /var/lib/jenkins/workspace/tp
+Cliquez sur "Sauver et terminer"
+Cliquez sur "Commencer à utiliser Jenkins"
+
+Vous arrivez sur la page principale
+Sélectionner le menu "Administrer Jenkins" puis "Gestion des plugins". Placez vous sur l'onglet "Disponibles
+
+Dans la barre de recherche, recherchez les plugins suivants
+>  - AnsiColor
+>  - Workspace Cleanup
+>  - Slack Notification>    
+>  - ? Analysis Model API ?
+
+Pour chacun cochez la case et cliquez sur "Install without restart"
+
+Sélectionnez "Tableau de bord" puis "Nouveau item"
+Renseignez un nom de projet puis sélectionnez "Pipeline"
+Cliquez sur "Ok"
+
+Une nouvelle page apparait
+Sélectionnez la case à cocher "GitHub hook trigger for GITScm polling"
+Copiez alors le contenu du fichier "pipeline.txt" du projet
+Cliquez sur "Sauver"
+
+Sur la page principale vous pouvez alors cliquer sur "Lancer un build"
+
+
+======================================================
+
+Attention au Relay && slack !!!
 
 Pense bete...
 > https://opensource.triology.de/jenkins/pipeline-syntax/globals
