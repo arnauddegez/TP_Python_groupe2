@@ -32,6 +32,21 @@ liste_machines = [
             "nom": "Linux",
             "version": "1.0"
         }
+    },
+
+    {
+       "hostname": "ad",
+        "ip": "192.168.1.46",
+        "cpus": 4,
+        "ram": "16Go",
+        "disque_dur": {
+            "nb": 2,
+            "taille": "6Go"
+            },
+        "os": {
+            "nom": "windows",
+            "version": "1.0"
+        }
     }
 ]
 

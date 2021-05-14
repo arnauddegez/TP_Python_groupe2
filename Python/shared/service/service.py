@@ -21,7 +21,7 @@ class Service():
             
         myquery = { "hostname": hostname }
     
-        l = list(self.donnees_machines.find(myquery, {"_id": 0})) # Converts object to list
+        l = list(self.donnees_machines.find(myquery, {"_hostname": 0})) # Converts object to list
 
         return dumps(l) # Converts to String
         
@@ -33,18 +33,17 @@ class Service():
         
         return "Deleted"
         
-    def update_machine(self, hostname):
+    def update_machine(self, hostname, machine):
 
         myquery = { "hostname": hostname }
-        newvalues = { "$set": { "hostname": random.randint(0,11) } }
-
-        self.donnees_machines.update_one(myquery, newvalues)
-        
+       
+        self.donnees_machines.replace_one(myquery, machine)
         return "Updated"    
 
-    def add_machine(self):
-        x = self.donnees_machines.insert_one(request.json)
+    def add_machine(self, machine):
+        x = self.donnees_machines.insert_one(machine)
         
         return "Added"
+
 
 
