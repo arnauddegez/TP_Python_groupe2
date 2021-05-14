@@ -33,7 +33,6 @@ install_package "dos2unix"
 
 # Installation des paquets necessaires
 echo "${GREEN}$(date +'%Y-%m-%d %H:%M:%S') [ INFO  ] : Démarrage installation des paquets necessaire ... ${NC}"
-install_package "apache2"
 install_package "ufw"
 
 install_package "python3" 
@@ -43,16 +42,17 @@ install_package "git"
 
 #installation des composants necessaires
 echo "${GREEN}$(date +'%Y-%m-%d %H:%M:%S') [ INFO  ] : Démarrage installation composants ... ${NC}"
-pip3 install pymongo flask
+pip3 install pymongo flask nexus3-cli
 
 # https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/
 
 install_package "gnupg"
+apt remove mongodb
 
-#wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
-#echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.4 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
+echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.4 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
 
-source_mongodb
+#source_mongodb
 
 apt-get update
 
@@ -68,15 +68,6 @@ ufw --force enable
 
 # On autorise les ports ssh, http et https
 ufw allow ssh
-ufw allow http
-ufw allow https
-ufw allow 5000
-
-# On deplace le index.html partage vers le repertoire cible
-cp /home/shared/index.html /var/www/html/
-
-# On change le 'owner' sur le dossier 'html'
-#cd /var/www
-chown -R www-data:www-data /var/www/html/
+ufw allow 5000/tcp
 
 echo "####### SUCCESS #######"

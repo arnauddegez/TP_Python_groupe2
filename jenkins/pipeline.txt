@@ -2,13 +2,27 @@ pipeline {
     agent any
     options {
         ansiColor('xterm')
+         // This is required if you want to clean before build
+        skipDefaultCheckout(true)
     }
     stages {
-        stage('Init') {
+        
+        stage('Checkout code') {
             steps {
-                echo "\u001b[35m[Projet ${env.JOB_NAME}] - Lancement du build: ${env.BUILD_DISPLAY_NAME} par ${env.NODE_NAME}\u001b[0m"
-                slackSend channel: 'C021DS82PMG', color: "#439FE0", message: "[Projet ${env.JOB_NAME}] - Lancement du build: ${env.BUILD_DISPLAY_NAME}"
+				echo "\u001b[35m[Projet ${env.JOB_NAME}] - Lancement du build: ${env.BUILD_DISPLAY_NAME} par ${env.NODE_NAME}\u001b[0m"
+                // slackSend channel: 'C021DS82PMG', color: "#439FE0", message: "[Projet ${env.JOB_NAME}] - Lancement du build: ${env.BUILD_DISPLAY_NAME}"
                 
+                // Clean before all
+                cleanWs()
+                
+                git credentialsId: 'ede1d98f-db6f-4bb6-a01b-ad304616ed46', url: 'https://github.com/apalpant/gradle-jenkins'
+            }
+        }
+		
+		stage('Init') {
+            steps {				
+				sh 'cp /home/shared/gradle.properties ${WORKSPACE}'
+				
                 script {
                     env.GIT_COMMIT_MSG = sh (script: 'git log -1 --pretty=%s ${GIT_COMMIT}', returnStdout: true).trim()
                     env.GIT_COMMIT_NB = sh (script: 'git log -1 --pretty=%h ${GIT_COMMIT}', returnStdout: true).trim()
@@ -17,13 +31,7 @@ pipeline {
                 }
                 
                 echo "\u001b[35m[Projet ${env.JOB_NAME}] - Git commit #${env.GIT_COMMIT_NB} \"${env.GIT_COMMIT_MSG}\" @author: ${env.GIT_AUTHOR_MAIL} (${env.GIT_AUTHOR})\u001b[0m"
-                slackSend channel: 'C021DS82PMG', color: "#439FE0", message: "Dernier commit: https://github.com/apalpant/gradle-jenkins/commit/${env.GIT_COMMIT_NB} \nMessage: \"${env.GIT_COMMIT_MSG}\" par: ${env.GIT_AUTHOR_MAIL} (${env.GIT_AUTHOR})"
-            }
-        }
-        
-        stage('Checkout code') {
-            steps {
-                git credentialsId: 'ede1d98f-db6f-4bb6-a01b-ad304616ed46', url: 'https://github.com/apalpant/gradle-jenkins'
+                // slackSend channel: 'C021DS82PMG', color: "#439FE0", message: "Dernier commit: https://github.com/apalpant/gradle-jenkins/commit/${env.GIT_COMMIT_NB} \nMessage: \"${env.GIT_COMMIT_MSG}\" par: ${env.GIT_AUTHOR_MAIL} (${env.GIT_AUTHOR})"
             }
         }
        
@@ -45,6 +53,31 @@ pipeline {
         
         stage('Tests et controles qualite') {
             parallel {
+                stage('Controle qualite') {
+                    steps {
+                        echo 'Publishing Code QA ....'
+                        
+                        // Run virtual environment
+                        sh '. venv/bin/activate'
+                        
+                        // Run Pylint.
+                        sh 'python3 -m pylint -f parseable ${WORKSPACE}/src/ | tee pylint.report'
+        
+                        // Run Pycodestyle (PEP8 checks).
+                         sh 'python3 -m pycodestyle ${WORKSPACE}/src/ | tee pep8.report'
+                    }
+                    post {
+                        always {
+                            recordIssues(
+                                aggregatingResults: true, 
+                                tools: [pyLint(pattern: 'pylint.report'), pep8(pattern: 'pep8.report')],
+                                unstableTotalAll: 20,
+                                failedTotalAll: 30
+                            )
+                        }
+                    }
+                }
+                
                 stage('Test application') { 
                     steps {
                         // Run virtual environment
@@ -55,28 +88,11 @@ pipeline {
                         
                         // Run coverage.
                         sh 'python3 -m coverage xml'
-                        
-                        // Run Pylint.
-                        sh 'python3 -m pylint -f parseable ${WORKSPACE}/src/ | tee pylint.report'
-        
-                        // Run Pycodestyle (PEP8 checks).
-                         sh 'python3 -m pycodestyle ${WORKSPACE}/src/ | tee pep8.report'
                     }
-                    
-                }
-                
-                stage('Publish Code QA') {
-                    steps {
-                        echo 'Publishing Code QA ....'
-                        
-                        recordIssues(
-                            aggregatingResults: true, 
-                            tools: [pyLint(pattern: 'pylint.report'), pep8(pattern: 'pep8.report')],
-                            unstableTotalAll: 20,
-                            failedTotalAll: 30
-                        )
-                            
-                        cobertura coberturaReportFile: 'coverage.xml'
+                    post {
+                        always {
+                            cobertura coberturaReportFile: '**/coverage.xml'
+                        }
                     }
                 }
             }
@@ -84,7 +100,7 @@ pipeline {
         
         stage('deploy') {
             steps {
-                sh 'python3 --version'
+                sh '/opt/gradle/latest/bin/gradle publish'
             }
         }
     }
@@ -102,7 +118,7 @@ pipeline {
                 } 
             }
             echo "[Projet ${env.JOB_NAME}] - Fin du build avec le statut:  ${ansiColor}${currentBuild.currentResult}\u001b[0m (${currentBuild.durationString})"
-            slackSend channel: 'C021DS82PMG', color: "${color}", message: "[Projet ${env.JOB_NAME}] - Fin du build ${env.BUILD_DISPLAY_NAME} avec le statut: ${currentBuild.currentResult} (${currentBuild.durationString}) \nRapports: ${env.BUILD_URL}"
+            // slackSend channel: 'C021DS82PMG', color: "${color}", message: "[Projet ${env.JOB_NAME}] - Fin du build ${env.BUILD_DISPLAY_NAME} avec le statut: ${currentBuild.currentResult} (${currentBuild.durationString}) \nRapports: ${env.BUILD_URL}"
         }
     }
 }

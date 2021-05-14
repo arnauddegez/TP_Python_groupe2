@@ -1,0 +1,5 @@
+{
+  "name": "rawHostedRepo",
+  "type": "groovy",
+  "content": "repository.createRawHosted('tp-repository')"
+}
