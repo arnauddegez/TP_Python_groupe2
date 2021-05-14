@@ -14,44 +14,45 @@ def index():
     return "Hello world!"
     
 # Annotation that allows the function to be hit at the specific URL. Indicates a GET HTTP method.
-@app.route("/bordgames/v1.0/games", methods=["GET"])
+@app.route("/boardmachine/v1.0/machines", methods=["GET"])
 # Function that will run when the endpoint is hit.
 
-# curl http://localhost:5000/bordgames/v1.0/games
+# curl http://localhost:5000/boardmachine/v1.0/machines
 
-def get_games():
+def get_machines():
     return serv.get_machines()
     
 # Annotation that allows the function to be hit at the specific URL with a parameter. Indicates a GET HTTP method.
-@app.route("/bordgames/v1.0/games/<int:game_id>", methods=["GET"])
+@app.route("/boardmachine/v1.0/machines/<string:hostname>", methods=["GET"])
 # This function requires a parameter from the URL.
 
-# curl http://localhost:5000/bordgames/v1.0/games/0
+# curl http://localhost:5000/boardmachine/v1.0/machines/Web
 
-def get_game(game_id):
-    return serv.get_machine(game_id)
+def get_machine(hostname):
+    return serv.get_machine(hostname)
     
-@app.route("/bordgames/v1.0/games/<int:game_id>", methods=["DELETE"])
+@app.route("/boardmachine/v1.0/machines/<string:hostname>", methods=["DELETE"])
 # This function requires a parameter from the URL.
 
-# curl -X DELETE http://localhost:5000/bordgames/v1.0/games/0
+# curl -X DELETE http://localhost:5000/boardmachine/v1.0/machines/ad
 
-def delete_game(game_id):
-    return serv.delete_machine(game_id)
+def delete_machine(hostname):
+    return serv.delete_machine(hostname)
     
-@app.route("/bordgames/v1.0/games/<int:game_id>", methods=["PUT"])
+@app.route("/boardmachine/v1.0/machines/<string:hostname>", methods=["PUT"])
 # This function requires a parameter from the URL.
 
-# curl -X PUT http://localhost:5000/bordgames/v1.0/games/1 
+# curl -X PUT -H "Content-Type: application/json" -d @update-machine.txt http://localhost:5000/bordmachine/v1.0/machines/python
 
-def update_game(game_id):
-    return serv.update_machine(game_id)
+def update_machine(hostname):
+    return serv.update_machine(hostname, request.json)
     
-@app.route("/bordgames/v1.0/games", methods=["POST"])
+@app.route("/boardmachine/v1.0/machines", methods=["POST"])
 # This function requires a parameter from the URL.
-# $ curl -X POST -H "Content-Type: application/json" -d @json_create_game.txt http://localhost:5000/bordgames/v1.0/games
-def add_game():
-    return serv.add_machine()
+# $ curl -X POST -H "Content-Type: application/json" -d @create-machine.txt http://localhost:5000/boardmachine/v1.0/machines
+
+def add_machine():
+    return serv.add_machine(request.json)
 
 # Checks to see if the name of the package is the run as the main package.
 if __name__ == "__main__":
