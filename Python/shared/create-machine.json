@@ -1,0 +1,15 @@
+{
+       "hostname": "messagerie",
+        "ip": "192.168.1.50",
+        "cpus": 4,
+        "ram": "8Go",
+        "disque_dur": {
+            "nb": 2,
+            "taille": "16Go"
+            },
+        "os": {
+            "nom": "windows",
+            "version": "1.0"
+        }
+    }
+

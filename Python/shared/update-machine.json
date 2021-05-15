@@ -1,0 +1,14 @@
+{
+       "hostname": "adx",
+        "ip": "192.168.1.47",
+        "cpus": 4,
+        "ram": "16Go",
+        "disque_dur": {
+            "nb": 2,
+            "taille": "8Go"
+            },
+        "os": {
+            "nom": "windows",
+            "version": "1.0"
+        }
+    }

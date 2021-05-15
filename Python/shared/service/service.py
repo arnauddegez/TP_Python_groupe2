@@ -7,43 +7,43 @@ class Service():
 
     def __init__(self):
         myclient = pymongo.MongoClient("mongodb://localhost:27017/")
-        mydb = myclient["mydatabase-webservices"]
-        self.mycol = mydb["games"]
+        base_de_donnees = myclient["tp-python"]
+        self.donnees_machines = base_de_donnees["machines"]
         
     # https://www.w3schools.com/python/python_mongodb_getstarted.asp
 
-    def get_games(self):
-        # Returns a JSON of the games defined above. jsonify is a Flask function that serializes the object for us.
-        lst = list(self.mycol.find({})) # Converts object to list
+    def get_machines(self):
+        # Returns a JSON of the machines defined above. jsonify is a Flask function that serializes the object for us.
+        lst = list(self.donnees_machines.find({})) # Converts object to list
         return dumps(lst) # Converts to String
 
-    def get_game(self, game_id):
+    def get_machine(self, hostname):
             
-        myquery = { "id": game_id }
+        myquery = { "hostname": hostname }
     
-        l = list(self.mycol.find(myquery, {"_id": 0})) # Converts object to list
+        l = list(self.donnees_machines.find(myquery, {"_hostname": 0})) # Converts object to list
 
         return dumps(l) # Converts to String
         
-    def delete_game(self, game_id):
+    def delete_machine(self, hostname):
 
-        myquery = { "id": game_id }
+        myquery = { "hostname": hostname }
 
-        self.mycol.delete_one(myquery)
+        self.donnees_machines.delete_one(myquery)
         
-        return "Efface"
+        return "Deleted"
         
-    def update_game(self, game_id):
+    def update_machine(self, hostname, machine):
 
-        myquery = { "id": game_id }
-        newvalues = { "$set": { "id": random.randint(0,11) } }
+        myquery = { "hostname": hostname }
+       
+        self.donnees_machines.replace_one(myquery, machine)
+        return "Updated"    
 
-        self.mycol.update_one(myquery, newvalues)
+    def add_machine(self, machine):
+        x = self.donnees_machines.insert_one(machine)
         
-        return "Efface"    
+        return "Added"
 
-    def add_game(self):
-        x = self.mycol.insert_one(request.json)
-        return "Add"
 
 
