@@ -4,8 +4,17 @@ Repo Tp Python de la semaine du 10/05 au 14/05
 
 Prerequis : 
 
-git bash
+git bash installé
+
 vagrant 
+
+Lancer la commande suivant dans un dossier "lenomquevousvoulez"
+
+```console
+git clone https://github.com/arnauddegez/TP_Python_groupe2.git
+```
+
+
 vérifier le réseau dans lequel on est : ex :192.168.x.xx
 
 x = reseau local 
@@ -15,7 +24,7 @@ ne pas hésiter à changer les adresses ip dans les vagrants file
 liste serveurs : 
 
 - jenkins : 192.168.1.3
-- web : 192.168.1.44
+- nexus : 192.168.1.44
 - python : 192.168.1.1
 
 
@@ -34,18 +43,17 @@ Mettre à jour Vagrant box :
 vagrant box update
 ```
 
-lancer la commande pour chaque machine : 
+lancer la commande pour chaque machine :
+
+Commencer par la machine Nexus
+
+Puis lancer les autres : 
 
 ```console
 vagrant up
 ```
 
+Voir le README.md présent dans chaque dossier. (Nexus, Jenkins, Python)
 
-A la fin de l'installation, il faut récupérer le mode passe jenkins : 
-```console
-jenkins: 2021-05-10 09:19:21 [ INFO  ] : Mot de passe jenkins ...
-jenkins: 8841043cc35f452c9973c08492152ef4
-```
 
-si le mot de passe jenkins s'affiche correctement, le serveur jenkins est installé.
 
