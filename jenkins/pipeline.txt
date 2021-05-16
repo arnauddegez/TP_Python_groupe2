@@ -100,7 +100,7 @@ pipeline {
         
         stage('deploy') {
             steps {
-                sh 'python3 --version'
+                sh '/opt/gradle/latest/bin/gradle publish'
             }
         }
     }

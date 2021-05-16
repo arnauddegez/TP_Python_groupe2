@@ -21,35 +21,11 @@ install_package() {
     fi
 }
 
-##Main
-
-#mise à jour et installation openjdk et unzip
+# Main
 apt-get update
 install_package "openjdk-8-jdk"
-install_package "unzip"
 
-
-## Récupération de la dernière version gradle
-
-VERSION=7.0
-wget https://downloads.gradle-dn.com/distributions/gradle-${VERSION}-bin.zip -P /tmp
-
-unzip -d /opt/gradle /tmp/gradle-${VERSION}-bin.zip
-
-# Faire pointer le lien vers la dernière version de gradle
-
-ln -s /opt/gradle/gradle-${VERSION} /opt/gradle/latest
-
-# Ajout de gradle au PATH
-
-touch /etc/profile.d/gradle.sh
-
-echo "export PATH=/opt/gradle/latest/bin:${PATH}" > /etc/profile.d/gradle.sh
-
-chmod +x /etc/profile.d/gradle.sh
-
-source /etc/profile.d/gradle.sh
-
+##Main
 useradd -M -d /opt/nexus -s /bin/bash -r nexus
 echo "nexus   ALL=(ALL)       NOPASSWD: ALL" > /etc/sudoers.d/nexus
 
@@ -69,6 +45,11 @@ sudo sed -i 's/2073/1024/g' /opt/nexus/bin/nexus.vmoptions
 
 sudo -u nexus /opt/nexus/bin/nexus start
 
+sleep 15s
+
+cat >> /opt/nexus/sonatype-work/nexus3/etc/nexus.properties << 'EOL'
+nexus.scripts.allowCreation=true
+EOL
 
 # Service
 
@@ -95,17 +76,46 @@ systemctl enable --now nexus.service
 
 ufw default allow outgoing
 
-ufw allow 8081
+ufw allow 8081/tcp
 ufw allow ssh
 
 ufw --force enable
 
 # Affiche le mot de passe
 
-sleep 90s #il faut attendre que le fichier se crée.
+sleep 120s #il faut attendre que le fichier se crée.
 
 echo 'Mot de passe admin \n'
 cat /opt/nexus/sonatype-work/nexus3/admin.password
 echo '\n\n'
 
-cp /home/shared/gradle.properties /home/vagrant/.gradle/
+export NEXUS_URL=http://localhost:8081
+
+export NEXUS_URL_FILE=http://192.168.1.44:8081
+
+export NEXUS_PASSWORD=$(xargs < /opt/nexus/sonatype-work/nexus3/admin.password)
+
+[ ! -r /home/shared/gradle.properties ] && touch /home/shared/gradle.properties
+
+cat <<EOF > /home/shared/gradle.properties
+nexusRepo=${NEXUS_URL_FILE}/repository/tp-repository/
+nexusUsername=admin
+nexusPassword=${NEXUS_PASSWORD}
+EOF
+
+cat <<EOF > /home/shared/export.sh
+#!/bin/bash
+export NEXUS3_URL=${NEXUS_URL_FILE}
+export NEXUS3_USERNAME=admin
+export NEXUS3_PASSWORD=${NEXUS_PASSWORD}
+EOF
+
+sleep 60s
+
+curl -u admin:${NEXUS_PASSWORD} -X POST -H 'Content-Type: application/json' ${NEXUS_URL}/service/rest/v1/script -d @/home/shared/rawHostedRepo.json 
+
+curl -vvv -u admin:${NEXUS_PASSWORD} -X POST --header 'Content-Type: text/plain' ${NEXUS_URL}/service/rest/v1/script/rawHostedRepo/run
+
+echo 'Mot de passe admin \n'
+cat /opt/nexus/sonatype-work/nexus3/admin.password
+echo '\n\n'
