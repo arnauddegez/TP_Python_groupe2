@@ -35,6 +35,13 @@ Vous pouvez que vous avez un résultat JSON à cette adresse http://192.168.1.1:
 ```console
 vagrant ssh
 ```
+Si on est pas à la suite du vagrant up il faudra lancer le serveur flask avec l'API ainsi que le service MongoDB
+
+```console
+sudo systemctl start mongod.service
+
+python3 /home/shared/api.py
+```
 
 ### Vérifier également que Python soit bien installé : 
 
