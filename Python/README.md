@@ -12,6 +12,11 @@ Pour rappel :
 git clone https://github.com/arnauddegez/TP_Python_groupe2.git
 ```
 
+L'installation est terminé lorsque la ligne suivant apparé : 
+```console
+python: ####### LANCEMENT API #######
+```
+
 ## Lancement de la machine :
 
 Ouvrir le dossier python :
@@ -23,18 +28,13 @@ vagrant up
 
 Une fois l'installation terminé : 
 
+Vous pouvez que vous avez un résultat JSON A cette adresse http://192.168.1.1:5000/boardmachine/v1.0/machines
 
 ## Connexion sur la machine :
 
 ```console
 vagrant ssh
 ```
-L'installation est terminé lorsque la ligne suivant apparé : 
-```console
-python: ####### LANCEMENT API #######
-```
-
-
 
 ### Vérifier également que Python soit bien installé : 
 
